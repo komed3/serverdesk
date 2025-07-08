@@ -9,7 +9,7 @@
     },
     {
         "name": "shell",
-        "command": "",
+        "command": "sudo -u admin bash",
         "x1": 40,
         "y1": 140,
         "x2": 340,
@@ -41,7 +41,7 @@
     },
     {
         "name": "root",
-        "command": "",
+        "command": "sudo bash",
         "x1": 360,
         "y1": 140,
         "x2": 660,
@@ -65,7 +65,7 @@
     },
     {
         "name": "journal",
-        "command": "journalctl -rf",
+        "command": "sudo journalctl -rf",
         "x1": 680,
         "y1": 40,
         "x2": 980,
@@ -97,7 +97,7 @@
     },
     {
         "name": "login",
-        "command": "",
+        "command": "chvt 3 && exec login",
         "x1": 640,
         "y1": 460,
         "x2": 740,
