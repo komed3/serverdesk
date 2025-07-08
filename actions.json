@@ -1,122 +1,92 @@
 [
-    {
-        "name": "htop",
-        "command": "sudo htop",
-        "x1": 40,
-        "y1": 40,
-        "x2": 340,
-        "y2": 120
-    },
-    {
-        "name": "shell",
-        "command": "sudo -u admin bash",
-        "x1": 40,
-        "y1": 140,
-        "x2": 340,
-        "y2": 220
-    },
-    {
-        "name": "stream",
-        "command": "",
-        "x1": 40,
-        "y1": 240,
-        "x2": 340,
-        "y2": 320
-    },
-    {
-        "name": "crontab",
-        "command": "",
-        "x1": 40,
-        "y1": 340,
-        "x2": 340,
-        "y2": 420
-    },
-    {
-        "name": "dmesg",
-        "command": "sudo dmesg -wT",
-        "x1": 360,
-        "y1": 40,
-        "x2": 660,
-        "y2": 120
-    },
-    {
-        "name": "root",
-        "command": "sudo bash",
-        "x1": 360,
-        "y1": 140,
-        "x2": 660,
-        "y2": 220
-    },
-    {
-        "name": "free",
-        "command": "",
-        "x1": 360,
-        "y1": 240,
-        "x2": 660,
-        "y2": 320
-    },
-    {
-        "name": "network",
-        "command": "",
-        "x1": 360,
-        "y1": 340,
-        "x2": 660,
-        "y2": 420
-    },
-    {
-        "name": "journal",
-        "command": "sudo journalctl -rf",
-        "x1": 680,
-        "y1": 40,
-        "x2": 980,
-        "y2": 120
-    },
-    {
-        "name": "update",
-        "command": "",
-        "x1": 680,
-        "y1": 140,
-        "x2": 980,
-        "y2": 220
-    },
-    {
-        "name": "hdd",
-        "command": "",
-        "x1": 680,
-        "y1": 240,
-        "x2": 980,
-        "y2": 320
-    },
-    {
-        "name": "users",
-        "command": "",
-        "x1": 680,
-        "y1": 340,
-        "x2": 980,
-        "y2": 420
-    },
-    {
-        "name": "login",
-        "command": "chvt 3 && exec login",
-        "x1": 640,
-        "y1": 460,
-        "x2": 740,
-        "y2": 560
-    },
-    {
-        "name": "reboot",
-        "command": "sudo systemctl -i reboot",
-        "x1": 760,
-        "y1": 460,
-        "x2": 860,
-        "y2": 560
-    },
-    {
-        "name": "poweroff",
-        "command": "sudo systemctl -i poweroff",
-        "x1": 880,
-        "y1": 460,
-        "x2": 980,
-        "y2": 560
-    }
+  {
+    "name": "monitor",
+    "command": "sudo htop",
+    "x1":  40, "y1":  40,
+    "x2": 340, "y2": 120
+  },
+  {
+    "name": "sysmsg",
+    "command": "sudo dmesg -wT",
+    "x1": 360, "y1":  40,
+    "x2": 660, "y2": 120
+  },
+  {
+    "name": "journal",
+    "command": "sudo journalctl -rf",
+    "x1": 680, "y1":  40,
+    "x2": 980, "y2": 120
+  },
+  {
+    "name": "terminal",
+    "command": "sudo -u admin bash",
+    "x1":  40, "y1": 140,
+    "x2": 340, "y2": 220
+  },
+  {
+    "name": "root",
+    "command": "sudo bash",
+    "x1": 360, "y1": 140,
+    "x2": 660, "y2": 220
+  },
+  {
+    "name": "update",
+    "command": "/home/touchmenu/bin/update.sh",
+    "x1": 680, "y1": 140,
+    "x2": 980, "y2": 220
+  },
+  {
+    "name": "inout",
+    "command": "/home/touchmenu/bin/inout.sh",
+    "x1":  40, "y1": 240,
+    "x2": 340, "y2": 320
+  },
+  {
+    "name": "freedisk",
+    "command": "df -ihT",
+    "x1": 360, "y1": 240,
+    "x2": 660, "y2": 320
+  },
+  {
+    "name": "hddraid",
+    "command": "sudo mdadm --detail /dev/md0",
+    "x1": 680, "y1": 240,
+    "x2": 980, "y2": 320
+  },
+  {
+    "name": "crontab",
+    "command": "/home/touchmenu/bin/crontab.sh",
+    "x1":  40, "y1": 340,
+    "x2": 340, "y2": 420
+  },
+  {
+    "name": "network",
+    "command": "sudo iftop -c /home/touchmenu/cfg/.iftoprc",
+    "x1": 360, "y1": 340,
+    "x2": 660, "y2": 420
+  },
+  {
+    "name": "users",
+    "command": "/home/touchmenu/bin/users.sh",
+    "x1": 680, "y1": 340,
+    "x2": 980, "y2": 420
+  },
+  {
+    "name": "login",
+    "command": "chvt 3 && exec login",
+    "x1": 640, "y1": 460,
+    "x2": 740, "y2": 560
+  },
+  {
+    "name": "reboot",
+    "command": "sudo systemctl -i reboot",
+    "x1": 760, "y1": 460,
+    "x2": 860, "y2": 560
+  },
+  {
+    "name": "poweroff",
+    "command": "sudo systemctl -i poweroff",
+    "x1": 880, "y1": 460,
+    "x2": 980, "y2": 560
+  }
 ]
