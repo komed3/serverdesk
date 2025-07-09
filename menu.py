@@ -13,6 +13,7 @@ CFG_PATH = os.path.join( SRC_PATH, 'cfg' )
 BIN_PATH = os.path.join( SRC_PATH, 'bin' )
 IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
+TOUCH_DEVICE = '/dev/input/event3'
 TIMEOUT_SEC = 4
 
 # Available menu actions
@@ -65,19 +66,31 @@ def main() -> None:
     x = y = last_touch = None
 
     # Load available actions
-    actions = load_actions()
+    try:
+        actions = load_actions()
+    except Exception as e:
+        print( f'[ERR] Failed to load actions: {e}' )
+        return
 
     # Initiate pygame for menu overlay
-    pygame.init()
-    pygame.mouse.set_visible( False )
-    img = pygame.image.load( os.path.join( IMG_PATH, 'menu.png' ) )
-    screen = pygame.display.set_mode( ( 0, 0 ), pygame.FULLSCREEN )
-    screen.blit( img, ( 0, 0 ) )
-    pygame.display.flip()
+    try:
+        pygame.init()
+        pygame.mouse.set_visible( False )
+        img = pygame.image.load( os.path.join( IMG_PATH, 'menu.png' ) )
+        screen = pygame.display.set_mode( ( 0, 0 ), pygame.FULLSCREEN )
+        screen.blit( img, ( 0, 0 ) )
+        pygame.display.flip()
+    except Exception as e:
+        print( f'[ERR] Failed to initiate pygame: {e}' )
+        return
 
-    # Get the touch device
-    device = evdev.InputDevice( '/dev/input/event3' )
-    device.grab()
+    # Initiate touch device
+    try:
+        device = evdev.InputDevice( TOUCH_DEVICE )
+        device.grab()
+    except Exception as e:
+        print( f'[ERR] Failed to initiate touch device: {e}' )
+        return
 
     # Main loop
     for e in device.read_loop():
