@@ -38,7 +38,7 @@
   },
   {
     "name": "inout",
-    "cmd": "%DIR%/bin/inout.sh",
+    "cmd": "sudo iotop -oa",
     "x1":  40, "y1": 240,
     "x2": 340, "y2": 320
   },
