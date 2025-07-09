@@ -7,16 +7,22 @@ import subprocess
 # Paths
 SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
 CFG_PATH = os.path.join( SRC_PATH, 'cfg' )
+BIN_PATH = os.path.join( SRC_PATH, 'bin' )
 
 # Available menu actions
-actions = None
+actions = []
 
 # Stores the current (sub) process
 proc = None
 
-# Get the path to a configuration file
-def cfg_path( p ):
-    return os.path.join( CFG_PATH, p )
+# Load actions from configuration file
+def load_actions():
+    with open( os.path.join( CFG_PATH, 'actions.json' ) ) as f:
+        return json.load( f )
+
+# Resolve command (replace %DIR% with source path)
+def resolve_command( cmd: str ):
+    return cmd.replace( '%DIR%', SRC_PATH )
 
 # Terminate current running process if there is one
 def terminate_proc():
@@ -30,21 +36,16 @@ def terminate_proc():
         proc = None
 
 # Run command as sub process
-def run_command( cmd ):
+def run_command( cmd: str ):
     global proc
     terminate_proc()
     proc = subprocess.Popen(
         cmd, shell = True,
-        preexec_fn = os.setsid
+        start_new_session = True
     )
 
-# Load actions from configuration file
-def load_actions():
-    with open( cfg_path( 'actions.json' ) ) as f:
-        return json.load( f )
-
 # Find the suitable action by position
-def find_action( x, y ):
+def find_action( x: int, y: int ):
     for a in actions:
         if ( a[ 'x1' ] <= x <= a[ 'x2' ] and
              a[ 'y1' ] <= y <= a[ 'y2' ] ):
