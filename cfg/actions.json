@@ -68,7 +68,7 @@
   },
   {
     "name": "users",
-    "cmd": "%DIR%/bin/users.sh",
+    "cmd": "sudo w",
     "x1": 680, "y1": 340,
     "x2": 980, "y2": 420
   },
