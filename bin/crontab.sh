@@ -3,16 +3,16 @@
 # Cron files
 CRONTAB='/etc/crontab'
 CRONDIR='/etc/cron.d'
-ANACRON='/etc/anacrontab'
 
 # Colors
 RESET='\033[0m'
 YELLOW='\033[1;33m'
 CYAN='\033[1;36m'
+TAB=$'\t'
 
 # Helper function to display a header
 print_header () {
-    echo -e "${CYAN}MI\tH\tD\tM\tW\tUSER\tCMD${RESET}"
+    echo -e "${CYAN}MI${TAB}H${TAB}D${TAB}M${TAB}W${TAB}USER${TAB}CMD${RESET}"
 }
 
 # Helper function to clean up cron lines
@@ -29,7 +29,7 @@ clean_cron_lines () {
 # Helper function to look up run-parts in cron files
 # This function expands run-parts commands to list individual scripts
 # It reads from standard input and outputs the expanded cron jobs
-function lookup_run_parts () {
+lookup_run_parts () {
     while read -r line; do
         match=$( echo "${line}" | grep -oE 'run-parts( +[^ ]+)* +[^ ]+' )
         if [[ -z "${match}" ]]; then
@@ -44,4 +44,20 @@ function lookup_run_parts () {
             fi
         fi
     done
+}
+
+# Function to list system cron jobs
+# This function reads the system cron files and formats the output
+# It displays the cron jobs in a tabular format with headers
+list_system_cron () {
+    echo -e "\n${YELLOW}[System cron jobs]${normal}"
+    print_header
+    {
+        [[ -f "$CRONTAB" ]] && cat "$CRONTAB"
+        [[ -d "$CRONDIR" ]] && cat "$CRONDIR"/*
+    } 2>/dev/null |
+        clean_cron_lines |
+        lookup_run_parts |
+        sed -E "s/^(\S+) (\S+) (\S+) (\S+) (\S+) (\S+) /\1\t\2\t\3\t\4\t\5\t\6\t/" |
+        column -s"$TAB" -t
 }
