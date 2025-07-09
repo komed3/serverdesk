@@ -10,20 +10,15 @@ CYAN='\033[1;36m'
 
 # Helper function to display a countdown before proceeding
 countdown () {
-
     local seconds=$1
-
     echo
-
     if (( seconds > 0 )); then
         for i in $( seq "$seconds" -1 1 ); do
             echo -ne "${CYAN}... proceed in $i sec ...\r${RESET}"
             sleep 1
         done
     fi
-
     echo
-
 }
 
 # Step 1 – Update package sources
