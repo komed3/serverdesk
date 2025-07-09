@@ -7,13 +7,20 @@ import pygame # type: ignore
 import subprocess
 import time
 
-# Paths & constants
+# Paths
 SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
 CFG_PATH = os.path.join( SRC_PATH, 'cfg' )
 BIN_PATH = os.path.join( SRC_PATH, 'bin' )
 IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
+# Display
 TOUCH_DEVICE = '/dev/input/event3'
+TOUCH_RES_X = 4096
+TOUCH_RES_Y = 4096
+DISPLAY_RES_X = 1024
+DISPLAY_RES_Y = 600
+
+# Constants
 TIMEOUT_SEC = 4
 
 # Initializing
@@ -120,9 +127,9 @@ def main() -> None:
         # coordinates based on the event type and code
         if e.type == evdev.ecodes.EV_ABS:
             if e.code == evdev.ecodes.ABS_X:
-                x = e.value * 1024 / 4096
+                x = e.value * DISPLAY_RES_X / TOUCH_RES_X
             elif e.code == evdev.ecodes.ABS_Y:
-                y = e.value *  600 / 4096
+                y = e.value * DISPLAY_RES_Y / TOUCH_RES_Y
 
         # If the touch coordinates are available, check
         # for actions and run the corresponding command
