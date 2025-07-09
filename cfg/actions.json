@@ -13,7 +13,7 @@
   },
   {
     "name": "journal",
-    "command": "sudo journalctl -rf",
+    "command": "sudo journalctl -f",
     "x1": 680, "y1":  40,
     "x2": 980, "y2": 120
   },
