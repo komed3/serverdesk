@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+# --------------------------------------------------------------------------------
+# ServerDesk
+# 
+# Simple monitoring and control menu for servers using a touch screen.
+# Can be used to run commands, open applications, or display information.
+# 
+# Author: Paul Köhler (komed3)
+# License: MIT
+# --------------------------------------------------------------------------------
+
 import evdev # type: ignore
 import json
 import os
@@ -15,10 +25,10 @@ IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
 # Display
 TOUCH_DEVICE = '/dev/input/event3'
-TOUCH_RES_X = 4096
-TOUCH_RES_Y = 4096
-DISPLAY_RES_X = 1024
-DISPLAY_RES_Y = 600
+TOUCH_RES_X = 4096      # Touch resolution in X direction
+TOUCH_RES_Y = 4096      # Touch resolution in Y direction
+DISPLAY_RES_X = 1024    # Display resolution in X direction
+DISPLAY_RES_Y = 600     # Display resolution in Y direction
 
 # Constants
 TIMEOUT_SEC = 4
