@@ -42,6 +42,13 @@ def find_action( x: int, y: int ) -> ( dict | None ):
             return a
     return None
 
+# Get the default command from the actions
+def default_action() -> ( dict | None ):
+    return next(
+        ( a for a in actions if a.get( 'default' ) == True ),
+        None
+    )
+
 # Resolve command (replace %DIR% with source path)
 def resolve_command( cmd: str ) -> str:
     return cmd.replace( '%DIR%', SRC_PATH )
@@ -116,9 +123,13 @@ def main() -> None:
     except Exception as e:
         print( f'[ERR] Failed to initiate touch device: {e}' )
         return
+
+    # Get the default action to run on program start
+    default = default_action()
     
-    # Execute standard command (htop) immediately on startup
-    run_command( 'sudo htop' )
+    # Execute standard command immediately on startup
+    if default and default.get( 'cmd' ):
+        run_command( default[ 'cmd' ] )
 
     # Main loop
     for e in device.read_loop():

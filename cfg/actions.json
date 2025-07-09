@@ -2,6 +2,7 @@
   {
     "name": "monitor",
     "cmd": "sudo htop",
+    "default": true,
     "x1":  40, "y1":  40,
     "x2": 340, "y2": 120
   },
