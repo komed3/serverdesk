@@ -16,11 +16,11 @@ IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 TOUCH_DEVICE = '/dev/input/event3'
 TIMEOUT_SEC = 4
 
-# Available menu actions
-actions = []
-
-# Stores the current (sub) process
-proc = None
+# Initializing
+actions = []            # Available menu actions
+proc = None             # Stores the current (sub) process
+overlay_vis = False     # If the overlay is visible
+last_cmd = None         # Last command that was running
 
 # Load actions from configuration file
 def load_actions():
@@ -52,13 +52,18 @@ def terminate_proc() -> None:
 
 # Run command as sub process
 def run_command( cmd: str ) -> None:
-    global proc
+    global proc, last_cmd
     terminate_proc()
-    proc = subprocess.Popen(
-        resolve_command( cmd ),
-        shell = True,
-        start_new_session = True
-    )
+    try:
+        proc = subprocess.Popen(
+            resolve_command( cmd ),
+            shell = True,
+            start_new_session = True
+        )
+        last_cmd = cmd
+    except Exception as e:
+        print( f'[ERR] Failed to run command "{cmd}": {e}' )
+        quit( 1 )
 
 # The main program
 def main() -> None:
