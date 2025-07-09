@@ -32,7 +32,7 @@
   },
   {
     "name": "update",
-    "cmd": "%DIR%/bin/update.sh",
+    "cmd": "%DIR%/bin/upgrade.sh",
     "x1": 680, "y1": 140,
     "x2": 980, "y2": 220
   },
