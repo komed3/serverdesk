@@ -1,0 +1,13 @@
+interface: enp4s0       # Main network interface
+dns-resolution: yes     # Show DNS names rather than IPs
+port-resolution: yes    # Show service which uses the port
+show-bars: yes          # Enable bar display
+port-display: on        # Show ports
+link-local: yes         # Display link-local IPv6 addresses
+hide-source: no         # Show source host names
+hide-destination: no    # Show destination host names
+use-bytes: yes          # Use bytes rather than bits
+sort: 40s               # Sort by third column
+line-display: two-line  # Show two lines per connection
+show-total: yes         # Display total volume per connection
+log-scale: yes          # Use a logarithmic scale

@@ -61,7 +61,7 @@
   },
   {
     "name": "network",
-    "command": "sudo iftop -c /home/serverdesk/cfg/.iftoprc",
+    "command": "sudo iftop -pc /home/serverdesk/cfg/.iftoprc",
     "x1": 360, "y1": 340,
     "x2": 660, "y2": 420
   },
