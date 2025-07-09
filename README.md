@@ -1,2 +1,5 @@
-# touchmenu
-Home build server touch menu
+# ServerDesk
+
+Home build server monitoring appication using a IPS touch screen panel.
+
+This will run automatically as soon as the server starts and run as service for displaying and managing several things, like `htop`, `dmesg`, `iftop`, `bash`, `update` and much more.
