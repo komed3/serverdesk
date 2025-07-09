@@ -76,3 +76,7 @@ function list_user_cron () {
         sed -E "s/^(\S+) (\S+) (\S+) (\S+) (\S+) (\S+) /\1\t\2\t\3\t\4\t\5\t\6\t/" |
         column -s"$TAB" -t
 }
+
+# Run the program and output cron lobs
+list_system_cron
+list_user_cron
