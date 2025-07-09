@@ -1,91 +1,91 @@
 [
   {
     "name": "monitor",
-    "command": "sudo htop",
+    "cmd": "sudo htop",
     "x1":  40, "y1":  40,
     "x2": 340, "y2": 120
   },
   {
     "name": "sysmsg",
-    "command": "sudo dmesg -wT",
+    "cmd": "sudo dmesg -wT",
     "x1": 360, "y1":  40,
     "x2": 660, "y2": 120
   },
   {
     "name": "journal",
-    "command": "sudo journalctl -f",
+    "cmd": "sudo journalctl -f",
     "x1": 680, "y1":  40,
     "x2": 980, "y2": 120
   },
   {
     "name": "terminal",
-    "command": "sudo -u admin bash",
+    "cmd": "sudo -u admin bash",
     "x1":  40, "y1": 140,
     "x2": 340, "y2": 220
   },
   {
     "name": "root",
-    "command": "sudo bash",
+    "cmd": "sudo bash",
     "x1": 360, "y1": 140,
     "x2": 660, "y2": 220
   },
   {
     "name": "update",
-    "command": "%DIR%/bin/update.sh",
+    "cmd": "%DIR%/bin/update.sh",
     "x1": 680, "y1": 140,
     "x2": 980, "y2": 220
   },
   {
     "name": "inout",
-    "command": "%DIR%/bin/inout.sh",
+    "cmd": "%DIR%/bin/inout.sh",
     "x1":  40, "y1": 240,
     "x2": 340, "y2": 320
   },
   {
     "name": "freedisk",
-    "command": "df -ihT",
+    "cmd": "df -ihT",
     "x1": 360, "y1": 240,
     "x2": 660, "y2": 320
   },
   {
     "name": "hddraid",
-    "command": "sudo mdadm --detail /dev/md0",
+    "cmd": "sudo mdadm --detail /dev/md0",
     "x1": 680, "y1": 240,
     "x2": 980, "y2": 320
   },
   {
     "name": "crontab",
-    "command": "%DIR%/bin/crontab.sh",
+    "cmd": "%DIR%/bin/crontab.sh",
     "x1":  40, "y1": 340,
     "x2": 340, "y2": 420
   },
   {
     "name": "network",
-    "command": "sudo iftop -pc %DIR%/cfg/.iftoprc",
+    "cmd": "sudo iftop -pc %DIR%/cfg/.iftoprc",
     "x1": 360, "y1": 340,
     "x2": 660, "y2": 420
   },
   {
     "name": "users",
-    "command": "%DIR%/bin/users.sh",
+    "cmd": "%DIR%/bin/users.sh",
     "x1": 680, "y1": 340,
     "x2": 980, "y2": 420
   },
   {
     "name": "login",
-    "command": "chvt 3 && exec login",
+    "cmd": "chvt 3 && exec login",
     "x1": 640, "y1": 460,
     "x2": 740, "y2": 560
   },
   {
     "name": "reboot",
-    "command": "sudo systemctl -i reboot",
+    "cmd": "sudo systemctl -i reboot",
     "x1": 760, "y1": 460,
     "x2": 860, "y2": 560
   },
   {
     "name": "poweroff",
-    "command": "sudo systemctl -i poweroff",
+    "cmd": "sudo systemctl -i poweroff",
     "x1": 880, "y1": 460,
     "x2": 980, "y2": 560
   }
