@@ -50,7 +50,7 @@ lookup_run_parts () {
 # This function reads the system cron files and formats the output
 # It displays the cron jobs in a tabular format with headers
 list_system_cron () {
-    echo -e "\n${YELLOW}[System cron jobs]${normal}"
+    echo -e "\n${YELLOW}[System cron jobs]${RESET}"
     print_header
     {
         [[ -f "$CRONTAB" ]] && cat "$CRONTAB"
@@ -58,6 +58,21 @@ list_system_cron () {
     } 2>/dev/null |
         clean_cron_lines |
         lookup_run_parts |
+        sed -E "s/^(\S+) (\S+) (\S+) (\S+) (\S+) (\S+) /\1\t\2\t\3\t\4\t\5\t\6\t/" |
+        column -s"$TAB" -t
+}
+
+# Function to list user cron jobs
+# This function reads the user cron jobs from the system and formats the output
+# It displays the cron jobs in a tabular format with headers
+function list_user_cron () {
+    echo -e "\n${YELLOW}[User cron jobs]${RESET}"
+    print_header
+    while IFS=: read -r user _; do
+        crontab -l -u "$user" 2>/dev/null |
+            clean_cron_lines |
+            sed -E "s/^((\S+ +){5})(.+)$/\1${user} \3/"
+    done < /etc/passwd |
         sed -E "s/^(\S+) (\S+) (\S+) (\S+) (\S+) (\S+) /\1\t\2\t\3\t\4\t\5\t\6\t/" |
         column -s"$TAB" -t
 }
