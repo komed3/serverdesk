@@ -23,16 +23,16 @@ overlay_vis = False     # If the overlay is visible
 last_cmd = None         # Last command that was running
 
 # Load actions from configuration file
-def load_actions():
+def load_actions() -> list:
     with open( os.path.join( CFG_PATH, 'actions.json' ) ) as f:
         return json.load( f )
 
 # Find the suitable action by position
-def find_action( x: int, y: int ) -> ( str | None ):
+def find_action( x: int, y: int ) -> ( dict | None ):
     for a in actions:
         if ( a[ 'x1' ] <= x <= a[ 'x2' ] and
              a[ 'y1' ] <= y <= a[ 'y2' ] ):
-            return a[ 'cmd' ]
+            return a
     return None
 
 # Resolve command (replace %DIR% with source path)
@@ -65,9 +65,24 @@ def run_command( cmd: str ) -> None:
         print( f'[ERR] Failed to run command "{cmd}": {e}' )
         quit( 1 )
 
+# Run the previous command if it exists
+def run_last() -> None:
+    if last_cmd:
+        run_command( last_cmd )
+
+# Show overlay with menu image
+def show_overlay( screen, img ) -> None:
+    screen.blit( img, ( 0, 0 ) )
+    pygame.display.flip()
+
+# Clear the overlay by filling the screen with black
+def hide_overlay( screen ) -> None:
+    screen.fill( ( 0, 0, 0 ) )
+    pygame.display.flip()
+
 # The main program
 def main() -> None:
-    global actions
+    global actions, overlay_vis
     x = y = last_touch = None
 
     # Load available actions
@@ -83,8 +98,6 @@ def main() -> None:
         pygame.mouse.set_visible( False )
         img = pygame.image.load( os.path.join( IMG_PATH, 'menu.png' ) )
         screen = pygame.display.set_mode( ( 0, 0 ), pygame.FULLSCREEN )
-        screen.blit( img, ( 0, 0 ) )
-        pygame.display.flip()
     except Exception as e:
         print( f'[ERR] Failed to initiate pygame: {e}' )
         return
@@ -96,26 +109,51 @@ def main() -> None:
     except Exception as e:
         print( f'[ERR] Failed to initiate touch device: {e}' )
         return
+    
+    # Execute standard command (htop) immediately on startup
+    run_command( 'sudo htop' )
 
     # Main loop
     for e in device.read_loop():
+
+        # If the event is a key event, calculate the touch
+        # coordinates based on the event type and code
         if e.type == evdev.ecodes.EV_ABS:
             if e.code == evdev.ecodes.ABS_X:
                 x = e.value * 1024 / 4096
             elif e.code == evdev.ecodes.ABS_Y:
                 y = e.value *  600 / 4096
+
+        # If the touch coordinates are available, check
+        # for actions and run the corresponding command
+        # if an action is found
         elif ( e.type == evdev.ecodes.EV_KEY and
                e.code == evdev.ecodes.BTN_TOUCH and
                e.value == 1 ):
+            last_touch = time.time()
             if x is not None and y is not None:
-                action = find_action( x, y )
-                if action:
-                    run_command( action )
-                last_touch = time.time()
-        elif last_touch and ( time.time() - last_touch > TIMEOUT_SEC ):
-            screen.blit( img, ( 0, 0 ) )
-            pygame.display.flip()
+                if not overlay_vis:
+                    show_overlay( screen, img )
+                    overlay_vis = True
+                else:
+                    action = find_action( x, y )
+                    if action and action.get( 'cmd' ):
+                        run_command( action[ 'cmd' ] )
+                        if action.get( 'rerun' ):
+                            run_last()
+                        hide_overlay( screen )
+                        overlay_vis = False
+
+        # If the overlay is visible and the last touch
+        # was more than TIMEOUT_SEC ago, hide the overlay
+        # and reset last_touch
+        elif ( overlay_vis and last_touch and
+               time.time() - last_touch > TIMEOUT_SEC ):
+            hide_overlay( screen )
+            overlay_vis = False
             last_touch = None
 
 # Run the program
-main()
+# Safely execute the main function
+if __name__ == '__main__':
+    main()
