@@ -14,6 +14,7 @@ import evdev # type: ignore
 import json
 import os
 import pygame # type: ignore
+import signal
 import subprocess
 import time
 
@@ -68,10 +69,10 @@ def terminate_proc() -> None:
     global proc
     if proc:
         try:
-            proc.terminate()
+            os.killpg( os.getpgid( proc.pid ), signal.SIGTERM ) # type: ignore
             proc.wait( timeout = 1 )
         except Exception:
-            proc.kill()
+            os.killpg( os.getpgid( proc.pid ), signal.SIGKILL ) # type: ignore
         proc = None
 
 # Run command as sub process
