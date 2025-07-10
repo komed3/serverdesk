@@ -20,13 +20,13 @@
   },
   {
     "name": "terminal",
-    "cmd": "sudo -u admin script -q -c 'bash -l' %TTY%",
+    "cmd": "sudo -u admin bash -l < %TTY% > %TTY% 2>&1",
     "x1":  40, "y1": 140,
     "x2": 340, "y2": 220
   },
   {
     "name": "root",
-    "cmd": "sudo script -q -c 'bash -l' %TTY%",
+    "cmd": "sudo bash -l < %TTY% > %TTY% 2>&1",
     "x1": 360, "y1": 140,
     "x2": 660, "y2": 220
   },
