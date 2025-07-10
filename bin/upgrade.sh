@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Check sudo rights
-if [ "$( id -u )" -ne 0 ]; then
-    if ! sudo -n true 2>/dev/null; then
-        echo "[ERR] This script requires root rights."
-        exit 1
-    fi
-fi
-
 # Colors
 RESET='\033[0m'
 YELLOW='\033[1;33m'
@@ -33,13 +25,13 @@ countdown 0
 
 # Step 1 – Update package sources
 echo -e "${YELLOW}[Step 1/6] Update package sources${RESET}"
-apt update
+sudo apt update
 
 countdown 0
 
 # Step 2 - Show list of upgradable packages
 echo -e "${YELLOW}[Step 2/6] Packages that need to be updated${RESET}"
-apt list --upgradable 2>/dev/null | tail -n +2
+sudo apt list --upgradable 2>/dev/null | tail -n +2
 
 # Wait for some time depending on the number of packages to be updated
 updates_count=$( apt list --upgradable 2>/dev/null | wc -l )
@@ -48,25 +40,25 @@ countdown $wait_time
 
 # Step 3 – Upgrade
 echo -e "${YELLOW}[Step 3/6] Upgrade installed packages${RESET}"
-apt upgrade -y
+sudo apt upgrade -y
 
 countdown 0
 
 # Step 4 – Distribution upgrade
 echo -e "${YELLOW}[Step 4/6] System upgrade (distribution)${RESET}"
-apt dist-upgrade -y
+sudo apt dist-upgrade -y
 
 countdown 5
 
 # Step 5 – Autoremove not used packages
 echo -e "${YELLOW}[Step 5/6] Remove packages no longer needed${RESET}"
-apt autoremove -y
+sudo apt autoremove -y
 
 countdown 0
 
 # Step 6 – Clean up package cache
 echo -e "${YELLOW}[Step 6/6] Clean up package cache${RESET}"
-apt clean
+sudo apt clean
 
 countdown 0
 
