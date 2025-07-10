@@ -10,13 +10,14 @@
 # License: MIT
 # --------------------------------------------------------------------------------
 
-import evdev # type: ignore
+import evdev  # type: ignore
 import json
 import os
-import pygame # type: ignore
 import signal
 import subprocess
 import time
+
+from PIL import Image # type: ignore
 
 # Paths
 SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
@@ -26,6 +27,7 @@ IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
 # Display
 TOUCH_DEVICE = '/dev/input/event3'
+FRAMEBUFFER = '/dev/fb0'
 TOUCH_RES_X = 4096      # Touch resolution in X direction
 TOUCH_RES_Y = 4096      # Touch resolution in Y direction
 DISPLAY_RES_X = 1024    # Display resolution in X direction
@@ -33,6 +35,7 @@ DISPLAY_RES_Y = 600     # Display resolution in Y direction
 
 # Constants
 TIMEOUT_SEC = 4
+MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
 
 # Initializing
 actions = []            # Available menu actions
@@ -67,12 +70,13 @@ def resolve_command( cmd: str ) -> str:
 # Terminate current running process if there is one
 def terminate_proc() -> None:
     global proc
+    pid = os.getpgid( proc.pid ) # type: ignore
     if proc:
         try:
-            os.killpg( os.getpgid( proc.pid ), signal.SIGTERM ) # type: ignore
+            os.killpg( pid, signal.SIGTERM ) # type: ignore
             proc.wait( timeout = 1 )
         except Exception:
-            os.killpg( os.getpgid( proc.pid ), signal.SIGKILL ) # type: ignore
+            os.killpg( pid, signal.SIGKILL ) # type: ignore
         proc = None
 
 # Run command as sub process
@@ -95,15 +99,26 @@ def run_last() -> None:
     if last_cmd:
         run_command( last_cmd )
 
-# Show overlay with menu image
-def show_overlay( screen, img ) -> None:
-    screen.blit( img, ( 0, 0 ) )
-    pygame.display.flip()
+# Show overlay using menu image
+def show_overlay() -> None:
+    try:
+        img = Image.open( MENU_IMAGE ).resize(
+            ( DISPLAY_RES_X, DISPLAY_RES_Y )
+        ).convert( 'RGB' )
+        with open( FRAMEBUFFER, 'wb' ) as fb:
+            fb.write( img.tobytes() )
+    except Exception as e:
+        print( f'[ERR] Failed to show overlay: {e}' )
 
-# Clear the overlay by filling the screen with black
-def hide_overlay( screen ) -> None:
-    screen.fill( ( 0, 0, 0 ) )
-    pygame.display.flip()
+# Hide / clear the overlay
+def hide_overlay() -> None:
+    try:
+        with open( FRAMEBUFFER, 'wb' ) as fb:
+            fb.write( bytes(
+                [ 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y * 3
+            ) )
+    except Exception as e:
+        print( f'[ERR] Failed to hide overlay: {e}' )
 
 # The main program
 def main() -> None:
@@ -117,16 +132,6 @@ def main() -> None:
         print( f'[ERR] Failed to load actions: {e}' )
         return
 
-    # Initiate pygame for menu overlay
-    try:
-        pygame.init()
-        pygame.mouse.set_visible( False )
-        img = pygame.image.load( os.path.join( IMG_PATH, 'menu.png' ) )
-        screen = pygame.display.set_mode( ( 0, 0 ), pygame.FULLSCREEN )
-    except Exception as e:
-        print( f'[ERR] Failed to initiate pygame: {e}' )
-        return
-
     # Initiate touch device
     try:
         device = evdev.InputDevice( TOUCH_DEVICE )
@@ -135,10 +140,8 @@ def main() -> None:
         print( f'[ERR] Failed to initiate touch device: {e}' )
         return
 
-    # Get the default action to run on program start
-    default = default_action()
-    
     # Execute standard command immediately on startup
+    default = default_action()
     if default and default.get( 'cmd' ):
         run_command( default[ 'cmd' ] )
 
@@ -162,7 +165,7 @@ def main() -> None:
             last_touch = time.time()
             if x is not None and y is not None:
                 if not overlay_vis:
-                    show_overlay( screen, img )
+                    show_overlay()
                     overlay_vis = True
                 else:
                     action = find_action( x, y )
@@ -170,7 +173,7 @@ def main() -> None:
                         run_command( action[ 'cmd' ] )
                         if action.get( 'rerun' ):
                             run_last()
-                        hide_overlay( screen )
+                        hide_overlay()
                         overlay_vis = False
 
         # If the overlay is visible and the last touch
@@ -178,7 +181,7 @@ def main() -> None:
         # and reset last_touch
         elif ( overlay_vis and last_touch and
                time.time() - last_touch > TIMEOUT_SEC ):
-            hide_overlay( screen )
+            hide_overlay()
             overlay_vis = False
             last_touch = None
 
