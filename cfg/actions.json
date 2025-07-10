@@ -26,7 +26,7 @@
   },
   {
     "name": "root",
-    "cmd": "sudo bash -l < %TTY% > %TTY% 2>&1",
+    "cmd": "sudo -E bash -c 'PS1=\"(root) > \" bash --norc'",
     "x1": 360, "y1": 140,
     "x2": 660, "y2": 220
   },
