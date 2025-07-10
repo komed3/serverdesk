@@ -1,5 +1,7 @@
 # ServerDesk
 
-Home build server monitoring appication using a IPS panel with touch screen.
+Virtual server monitoring application that runs without a GUI using an IPS panel with a touch interface.
 
-This will run automatically as soon as the server starts and run as service for displaying and managing several things, like `htop`, `dmesg`, `iftop`, `bash`, `update` and much more.
+This program will run automatically as soon as the server starts and operates in the background as a service for displaying and managing various things, such as `htop`, `dmesg`, `iftop`, `bash`, `update` and much more.
+
+![Overlay](./assets/menu.png)
