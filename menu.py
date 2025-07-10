@@ -166,10 +166,11 @@ def main() -> None:
         err( '[ERR] Failed to load actions', e )
         return
 
-    # Initiate touch device
+    # Initiate touch device and overlay
     try:
         device = evdev.InputDevice( TOUCH_DEVICE )
         device.grab()
+        load_ov_buffer()
     except Exception as e:
         err( '[ERR] Failed to initiate touch device', e )
         return
