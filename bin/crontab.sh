@@ -78,5 +78,7 @@ function list_user_cron () {
 }
 
 # Run the program and output cron lobs
+echo -e "${YELLOW}[CRONTAB - List cron job]${RESET}"
+
 list_system_cron
 list_user_cron

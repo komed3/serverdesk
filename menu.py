@@ -83,7 +83,7 @@ def terminate_proc() -> None:
 def run_command( cmd: str ) -> None:
     global proc, last_cmd
     terminate_proc()
-    time.sleep( 0.5 )
+    time.sleep( 1 )
     try:
         proc = subprocess.Popen(
             resolve_command( cmd ),
