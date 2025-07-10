@@ -20,13 +20,13 @@
   },
   {
     "name": "terminal",
-    "cmd": "sudo openvt -c 7 -- sudo -u admin bash -l",
+    "cmd": "%DIR%/bin/open_console.sh --admin",
     "x1":  40, "y1": 140,
     "x2": 340, "y2": 220
   },
   {
     "name": "root",
-    "cmd": "sudo openvt -c 8 -- bash -l",
+    "cmd": "%DIR%/bin/open_console.sh --root",
     "x1": 360, "y1": 140,
     "x2": 660, "y2": 220
   },
