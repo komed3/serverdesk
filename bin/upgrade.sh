@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 # Check sudo rights
-[ "$( id -u )" -ne 0 ] && echo "[ERR] This script requires root rights." && exit 1
+if [ "$( id -u )" -ne 0 ]; then
+    if ! sudo -n true 2>/dev/null; then
+        echo "[ERR] This script requires root rights."
+        exit 1
+    fi
+fi
 
 # Colors
 RESET='\033[0m'
