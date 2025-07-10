@@ -12,18 +12,13 @@
 
 import evdev # type: ignore
 import json
+import locale
 import os
 import signal
 import subprocess
 import time
 
 from PIL import Image # type: ignore
-
-# Environment
-env = os.environ.copy()
-env[ 'TERM' ] = 'linux'
-env[ 'LANG' ] = 'en_US.UTF-8'
-env[ 'LC_ALL' ] = 'en_US.UTF-8'
 
 # Paths
 SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
@@ -32,6 +27,8 @@ BIN_PATH = os.path.join( SRC_PATH, 'bin' )
 IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
 # Constants
+LANG = '.'.join( map( str, locale.getlocale() ) )
+TERM = os.getenv( 'TERM' ) or 'linux'
 MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
 TTY = os.ttyname( 0 ) # type: ignore
 
@@ -42,6 +39,12 @@ TOUCH_RES_X = 4096          # Touch resolution in X direction
 TOUCH_RES_Y = 4096          # Touch resolution in Y direction
 DISPLAY_RES_X = 1024        # Display resolution in X direction
 DISPLAY_RES_Y = 600         # Display resolution in Y direction
+
+# Environment
+env = os.environ.copy()
+env[ 'TERM' ] = TERM
+env[ 'LANG' ] = LANG
+env[ 'LC_ALL' ] = LANG
 
 # Initializing
 actions = []                # Available menu actions
