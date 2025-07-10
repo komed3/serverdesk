@@ -35,7 +35,6 @@ DISPLAY_RES_Y = 600     # Display resolution in Y direction
 
 # Constants
 MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
-TIMEOUT_SEC = 4
 
 # Initializing
 actions = []            # Available menu actions
@@ -126,8 +125,8 @@ def hide_overlay() -> None:
 # The main program
 def main() -> None:
     global actions, overlay_vis
-    x = y = last_touch = None
     touch_active = False
+    x = y = None
 
     # Load available actions
     try:
@@ -169,7 +168,6 @@ def main() -> None:
                 touch_active = True
             elif e.value == 0 and touch_active:
                 touch_active = False
-                last_touch = time.time()
                 if x is not None and y is not None:
                     if not overlay_vis:
                         terminate_proc()
@@ -183,16 +181,6 @@ def main() -> None:
                                 run_last()
                             hide_overlay()
                             overlay_vis = False
-
-        # If the overlay is visible and the last touch
-        # was more than TIMEOUT_SEC ago, hide the overlay
-        # and reset last_touch
-        elif ( overlay_vis and last_touch and
-               time.time() - last_touch > TIMEOUT_SEC ):
-            run_last()
-            hide_overlay()
-            overlay_vis = False
-            last_touch = None
 
 # Run the program
 # Safely execute the main function
