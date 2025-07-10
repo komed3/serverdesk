@@ -105,8 +105,11 @@ def show_overlay() -> None:
         img = Image.open( MENU_IMAGE ).resize(
             ( DISPLAY_RES_X, DISPLAY_RES_Y )
         ).convert( 'RGB' )
+        data = bytearray()
+        for r, g, b in img.getdata():
+            data.extend( [ b, g, r, 0 ] )
         with open( FRAMEBUFFER, 'wb' ) as fb:
-            fb.write( img.tobytes() )
+            fb.write( data )
     except Exception as e:
         print( f'[ERR] Failed to show overlay: {e}' )
 
