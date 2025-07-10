@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Cron files
 CRONTAB='/etc/crontab'
 CRONDIR='/etc/cron.d'

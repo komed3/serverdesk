@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Check sudo rights
 if [ "$( id -u )" -ne 0 ]; then
     if ! sudo -n true 2>/dev/null; then
