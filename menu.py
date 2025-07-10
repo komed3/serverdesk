@@ -83,7 +83,7 @@ def run_command( cmd: str ) -> None:
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
-            preexec_fn = os.setsid # type: ignore
+            start_new_session = True
         )
         last_cmd = cmd
     except Exception as e:
