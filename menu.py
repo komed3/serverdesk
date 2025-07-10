@@ -34,8 +34,8 @@ DISPLAY_RES_X = 1024    # Display resolution in X direction
 DISPLAY_RES_Y = 600     # Display resolution in Y direction
 
 # Constants
-TIMEOUT_SEC = 4
 MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
+TIMEOUT_SEC = 4
 
 # Initializing
 actions = []            # Available menu actions
@@ -116,10 +116,9 @@ def show_overlay() -> None:
 # Hide / clear the overlay
 def hide_overlay() -> None:
     try:
+        black = bytearray( [ 0, 0, 0, 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y )
         with open( FRAMEBUFFER, 'wb' ) as fb:
-            fb.write( bytes(
-                [ 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y * 3
-            ) )
+            fb.write( black )
     except Exception as e:
         print( f'[ERR] Failed to hide overlay: {e}' )
 
@@ -127,6 +126,7 @@ def hide_overlay() -> None:
 def main() -> None:
     global actions, overlay_vis
     x = y = last_touch = None
+    touch_active = False
 
     # Load available actions
     try:
@@ -163,21 +163,24 @@ def main() -> None:
         # for actions and run the corresponding command
         # if an action is found
         elif ( e.type == evdev.ecodes.EV_KEY and
-               e.code == evdev.ecodes.BTN_TOUCH and
-               e.value == 1 ):
-            last_touch = time.time()
-            if x is not None and y is not None:
-                if not overlay_vis:
-                    show_overlay()
-                    overlay_vis = True
-                else:
-                    action = find_action( x, y )
-                    if action and action.get( 'cmd' ):
-                        run_command( action[ 'cmd' ] )
-                        if action.get( 'rerun' ):
-                            run_last()
-                        hide_overlay()
-                        overlay_vis = False
+               e.code == evdev.ecodes.BTN_TOUCH ):
+            if e.value == 1:
+                touch_active = True
+            elif e.value == 0 and touch_active:
+                touch_active = False
+                last_touch = time.time()
+                if x is not None and y is not None:
+                    if not overlay_vis:
+                        show_overlay()
+                        overlay_vis = True
+                    else:
+                        action = find_action( x, y )
+                        if action and action.get( 'cmd' ):
+                            run_command( action[ 'cmd' ] )
+                            if action.get( 'rerun' ):
+                                run_last()
+                            hide_overlay()
+                            overlay_vis = False
 
         # If the overlay is visible and the last touch
         # was more than TIMEOUT_SEC ago, hide the overlay
