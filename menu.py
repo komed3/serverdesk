@@ -140,6 +140,7 @@ def show_overlay() -> None:
     try:
         with open( FRAMEBUFFER, 'wb' ) as fb:
             fb.write( ov_buffer )
+        os.system( f'tput civis > {TTY}' )
     except Exception as e:
         err( '[ERR] Failed to show overlay', e )
 
@@ -149,6 +150,7 @@ def hide_overlay() -> None:
     try:
         with open( FRAMEBUFFER, 'wb' ) as fb:
             fb.write( bl_buffer  )
+        os.system( f'tput cnorm > {TTY}' )
     except Exception as e:
         err( '[ERR] Failed to hide overlay', e )
 
