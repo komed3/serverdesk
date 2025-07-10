@@ -62,7 +62,7 @@
   },
   {
     "name": "network",
-    "cmd": "sudo iftop -pc %DIR%/cfg/.iftoprc",
+    "cmd": "sudo iftop -pc %DIR%/cfg/iftop",
     "x1": 360, "y1": 340,
     "x2": 660, "y2": 420
   },
