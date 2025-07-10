@@ -19,42 +19,61 @@ import time
 
 from PIL import Image # type: ignore
 
-# Paths
-SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
-CFG_PATH = os.path.join( SRC_PATH, 'cfg' )
-BIN_PATH = os.path.join( SRC_PATH, 'bin' )
-IMG_PATH = os.path.join( SRC_PATH, 'assets' )
-
-# Display
-TOUCH_DEVICE = '/dev/input/event3'
-FRAMEBUFFER = '/dev/fb0'
-TOUCH_RES_X = 4096      # Touch resolution in X direction
-TOUCH_RES_Y = 4096      # Touch resolution in Y direction
-DISPLAY_RES_X = 1024    # Display resolution in X direction
-DISPLAY_RES_Y = 600     # Display resolution in Y direction
-
-# Constants
-MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
-TTY = os.ttyname( 0 ) # type: ignore
-
-# Initializing
-actions = []            # Available menu actions
-proc = None             # Stores the current (sub) process
-overlay_vis = False     # If the overlay is visible
-last_cmd = None         # Last command that was running
-
 # Environment
 env = os.environ.copy()
 env[ 'TERM' ] = 'linux'
 env[ 'LANG' ] = 'en_US.UTF-8'
 env[ 'LC_ALL' ] = 'en_US.UTF-8'
 
+# Paths
+SRC_PATH = os.path.dirname( os.path.realpath( __file__ ) )
+CFG_PATH = os.path.join( SRC_PATH, 'cfg' )
+BIN_PATH = os.path.join( SRC_PATH, 'bin' )
+IMG_PATH = os.path.join( SRC_PATH, 'assets' )
+
+# Constants
+MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
+TTY = os.ttyname( 0 ) # type: ignore
+
+# Display
+TOUCH_DEVICE = '/dev/input/event3'
+FRAMEBUFFER = '/dev/fb0'
+TOUCH_RES_X = 4096          # Touch resolution in X direction
+TOUCH_RES_Y = 4096          # Touch resolution in Y direction
+DISPLAY_RES_X = 1024        # Display resolution in X direction
+DISPLAY_RES_Y = 600         # Display resolution in Y direction
+
+# Initializing
+actions = []                # Available menu actions
+proc = None                 # Stores the current (sub) process
+last_cmd = None             # Last command that was running
+bl_buffer = bytearray( [ 0, 0, 0, 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y )
+ov_buffer = bytearray()     # Overlay buffer data
+
+# Print error message and exit with code
+def err( msg: str, e: None | Exception = None, code: int = 1 ) -> None:
+    if e is Exception:
+        print( f'[ERR] {msg}: {e}' )
+    else:
+        print( f'[ERR] {msg}' )
+    quit( code )
+
 # Reset terminal to a clean state
-def reset_terminal( ts: float = 0.1 ) -> None:
+def reset_terminal( sleep: float = 0.1 ) -> None:
     os.system( 'clear && reset' )
-    os.system( 'clear > {TTY}' )
-    os.system( 'tput reset > {TTY}' )
-    time.sleep( ts )
+    os.system( f'clear > {TTY}' )
+    os.system( f'tput reset > {TTY}' )
+    time.sleep( max( 0.1, sleep ) )
+
+# Compile the menu image to a byte array
+# This is used to display the menu on the framebuffer
+def load_ov_buffer() -> None:
+    global ov_buffer
+    img = Image.open( MENU_IMAGE ).resize(
+        ( DISPLAY_RES_X, DISPLAY_RES_Y )
+    ).convert( 'RGB' )
+    for r, g, b in img.getdata():
+        ov_buffer.extend( [ b, g, r, 0 ] )
 
 # Load actions from configuration file
 def load_actions() -> list:
@@ -63,6 +82,7 @@ def load_actions() -> list:
 
 # Find the suitable action by position
 def find_action( x: int, y: int ) -> ( dict | None ):
+    global actions
     for a in actions:
         if ( a[ 'x1' ] <= x <= a[ 'x2' ] and
              a[ 'y1' ] <= y <= a[ 'y2' ] ):
@@ -71,16 +91,14 @@ def find_action( x: int, y: int ) -> ( dict | None ):
 
 # Get the default command from the actions
 def default_action() -> ( dict | None ):
-    return next(
-        ( a for a in actions if a.get( 'default' ) == True ),
-        None
-    )
+    global actions
+    return next( ( a for a in actions if a.get( 'default' ) == True ), None )
 
 # Resolve command (replace %DIR% with source path)
 def resolve_command( cmd: str ) -> str:
     return cmd.replace( '%DIR%', SRC_PATH )
 
-# Terminate current running process if there is one
+# Terminate current (running) process if there is one
 def terminate_proc() -> None:
     global proc
     if proc:
@@ -95,8 +113,6 @@ def terminate_proc() -> None:
 # Run command as sub process
 def run_command( cmd: str ) -> None:
     global proc, last_cmd
-    terminate_proc()
-    reset_terminal( 0.5 )
     try:
         tty = open( TTY, 'w' )
         proc = subprocess.Popen(
@@ -110,48 +126,44 @@ def run_command( cmd: str ) -> None:
         )
         last_cmd = cmd
     except Exception as e:
-        print( f'[ERR] Failed to run command "{cmd}": {e}' )
-        quit( 1 )
+        err( f'[ERR] Failed to run command <{cmd}>', e )
 
 # Run the previous command if it exists
 def run_last() -> None:
+    global last_cmd
     if last_cmd:
         run_command( last_cmd )
 
 # Show overlay using menu image
 def show_overlay() -> None:
+    global ov_buffer
     try:
-        img = Image.open( MENU_IMAGE ).resize(
-            ( DISPLAY_RES_X, DISPLAY_RES_Y )
-        ).convert( 'RGB' )
-        data = bytearray()
-        for r, g, b in img.getdata():
-            data.extend( [ b, g, r, 0 ] )
         with open( FRAMEBUFFER, 'wb' ) as fb:
-            fb.write( data )
+            fb.write( ov_buffer )
     except Exception as e:
-        print( f'[ERR] Failed to show overlay: {e}' )
+        err( '[ERR] Failed to show overlay', e )
 
 # Hide / clear the overlay
 def hide_overlay() -> None:
+    global bl_buffer
     try:
-        black = bytearray( [ 0, 0, 0, 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y )
         with open( FRAMEBUFFER, 'wb' ) as fb:
-            fb.write( black )
+            fb.write( bl_buffer  )
     except Exception as e:
-        print( f'[ERR] Failed to hide overlay: {e}' )
+        err( '[ERR] Failed to hide overlay', e )
 
 # The main program
 def main() -> None:
-    global actions, overlay_vis
-    touch_active = False
+    global actions
+    overlay_vis = touch_active = False
     x = y = None
 
     # Load available actions
     try:
         actions = load_actions()
+        default = default_action()
     except Exception as e:
-        print( f'[ERR] Failed to load actions: {e}' )
+        err( '[ERR] Failed to load actions', e )
         return
 
     # Initiate touch device
@@ -159,13 +171,15 @@ def main() -> None:
         device = evdev.InputDevice( TOUCH_DEVICE )
         device.grab()
     except Exception as e:
-        print( f'[ERR] Failed to initiate touch device: {e}' )
+        err( '[ERR] Failed to initiate touch device', e )
         return
 
     # Execute standard command immediately on startup
-    default = default_action()
     if default and default.get( 'cmd' ):
         run_command( default[ 'cmd' ] )
+    else:
+        show_overlay()
+        overlay_vis = True
 
     # Main loop
     for e in device.read_loop():
@@ -196,11 +210,15 @@ def main() -> None:
                     else:
                         action = find_action( x, y )
                         if action and action.get( 'cmd' ):
-                            run_command( action[ 'cmd' ] )
-                            if action.get( 'rerun' ):
-                                run_last()
+                            terminate_proc()
                             hide_overlay()
                             overlay_vis = False
+                            reset_terminal( 0.5 )
+                            run_command( action[ 'cmd' ] )
+                            if action.get( 'rerun' ):
+                                terminate_proc()
+                                reset_terminal( 0.5 )
+                                run_last()
 
 # Run the program
 # Safely execute the main function
