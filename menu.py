@@ -12,7 +12,6 @@
 
 import evdev # type: ignore
 import json
-import locale
 import os
 import signal
 import subprocess
