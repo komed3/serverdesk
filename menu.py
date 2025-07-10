@@ -42,6 +42,10 @@ proc = None             # Stores the current (sub) process
 overlay_vis = False     # If the overlay is visible
 last_cmd = None         # Last command that was running
 
+# Environment
+env = os.environ.copy()
+env[ 'TERM' ] = 'linux'
+
 # Load actions from configuration file
 def load_actions() -> list:
     with open( os.path.join( CFG_PATH, 'actions.json' ) ) as f:
@@ -77,18 +81,19 @@ def terminate_proc() -> None:
         except Exception:
             os.killpg( pid, signal.SIGKILL ) # type: ignore
         proc = None
-    os.system( 'clear' )
 
 # Run command as sub process
 def run_command( cmd: str ) -> None:
     global proc, last_cmd
     terminate_proc()
-    time.sleep( 1 )
+    time.sleep( 0.5 )
+    os.system( 'clear && reset' )
     try:
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
-            start_new_session = True
+            start_new_session = True,
+            env = env
         )
         last_cmd = cmd
     except Exception as e:
