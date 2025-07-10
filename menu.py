@@ -10,7 +10,7 @@
 # License: MIT
 # --------------------------------------------------------------------------------
 
-import evdev  # type: ignore
+import evdev # type: ignore
 import json
 import os
 import signal
@@ -83,6 +83,7 @@ def terminate_proc() -> None:
 def run_command( cmd: str ) -> None:
     global proc, last_cmd
     terminate_proc()
+    time.sleep( 0.25 )
     try:
         proc = subprocess.Popen(
             resolve_command( cmd ),
