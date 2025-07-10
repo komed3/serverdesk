@@ -47,7 +47,7 @@ env = os.environ.copy()
 env[ 'TERM' ] = 'linux'
 
 # Reset terminal to a clean state
-def reset_terminal( ts: float = 0 ) -> None:
+def reset_terminal( ts: float = 0.1 ) -> None:
     time.sleep( ts )
     os.system( 'clear && reset' )
     print( '\033[0m' )
@@ -94,11 +94,15 @@ def run_command( cmd: str ) -> None:
     terminate_proc()
     reset_terminal( 0.5 )
     try:
+        tty = open( os.ttyname( 0 ), 'w' ) # type: ignore
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
             start_new_session = True,
-            env = env
+            env = env,
+            stdout = tty,
+            stderr = tty,
+            stdin = tty
         )
         last_cmd = cmd
     except Exception as e:
