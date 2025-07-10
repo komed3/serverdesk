@@ -46,6 +46,12 @@ last_cmd = None         # Last command that was running
 env = os.environ.copy()
 env[ 'TERM' ] = 'linux'
 
+# Reset terminal to a clean state
+def reset_terminal( ts: float = 0 ) -> None:
+    time.sleep( ts )
+    os.system( 'clear && reset' )
+    print( '\033[0m' )
+
 # Load actions from configuration file
 def load_actions() -> list:
     with open( os.path.join( CFG_PATH, 'actions.json' ) ) as f:
@@ -86,8 +92,7 @@ def terminate_proc() -> None:
 def run_command( cmd: str ) -> None:
     global proc, last_cmd
     terminate_proc()
-    time.sleep( 0.5 )
-    os.system( 'clear && reset' )
+    reset_terminal( 0.5 )
     try:
         proc = subprocess.Popen(
             resolve_command( cmd ),
@@ -177,6 +182,7 @@ def main() -> None:
                 if x is not None and y is not None:
                     if not overlay_vis:
                         terminate_proc()
+                        reset_terminal()
                         show_overlay()
                         overlay_vis = True
                     else:
