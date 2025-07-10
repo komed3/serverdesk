@@ -35,6 +35,7 @@ DISPLAY_RES_Y = 600     # Display resolution in Y direction
 
 # Constants
 MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
+TTY = os.ttyname( 0 ) # type: ignore
 
 # Initializing
 actions = []            # Available menu actions
@@ -45,12 +46,15 @@ last_cmd = None         # Last command that was running
 # Environment
 env = os.environ.copy()
 env[ 'TERM' ] = 'linux'
+env[ 'LANG' ] = 'en_US.UTF-8'
+env[ 'LC_ALL' ] = 'en_US.UTF-8'
 
 # Reset terminal to a clean state
 def reset_terminal( ts: float = 0.1 ) -> None:
-    time.sleep( ts )
     os.system( 'clear && reset' )
-    print( '\033[0m' )
+    os.system( 'clear > {TTY}' )
+    os.system( 'tput reset > {TTY}' )
+    time.sleep( ts )
 
 # Load actions from configuration file
 def load_actions() -> list:
@@ -94,7 +98,7 @@ def run_command( cmd: str ) -> None:
     terminate_proc()
     reset_terminal( 0.5 )
     try:
-        tty = open( os.ttyname( 0 ), 'w' ) # type: ignore
+        tty = open( TTY, 'w' )
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,

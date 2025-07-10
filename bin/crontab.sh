@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Cron files
 CRONTAB='/etc/crontab'

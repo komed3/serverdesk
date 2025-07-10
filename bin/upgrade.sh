@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Check sudo rights
 if [ "$( id -u )" -ne 0 ]; then
