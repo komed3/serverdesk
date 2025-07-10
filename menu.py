@@ -78,6 +78,7 @@ def terminate_proc() -> None:
         except Exception:
             os.killpg( pid, signal.SIGKILL ) # type: ignore
         proc = None
+    os.system( 'clear' )
 
 # Run command as sub process
 def run_command( cmd: str ) -> None:
@@ -171,6 +172,7 @@ def main() -> None:
                 last_touch = time.time()
                 if x is not None and y is not None:
                     if not overlay_vis:
+                        terminate_proc()
                         show_overlay()
                         overlay_vis = True
                     else:
@@ -187,6 +189,7 @@ def main() -> None:
         # and reset last_touch
         elif ( overlay_vis and last_touch and
                time.time() - last_touch > TIMEOUT_SEC ):
+            run_last()
             hide_overlay()
             overlay_vis = False
             last_touch = None
