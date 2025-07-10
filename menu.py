@@ -27,9 +27,8 @@ BIN_PATH = os.path.join( SRC_PATH, 'bin' )
 IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 
 # Constants
-LANG = '.'.join( map( str, locale.getlocale() ) )
 TERM = os.getenv( 'TERM' ) or 'linux'
-MENU_IMAGE = os.path.join( IMG_PATH, 'menu.png' )
+IMAGE = os.path.join( IMG_PATH, 'menu.png' )
 TTY = os.ttyname( 0 ) # type: ignore
 
 # Display
@@ -43,8 +42,7 @@ DISPLAY_RES_Y = 600         # Display resolution in Y direction
 # Environment
 env = os.environ.copy()
 env[ 'TERM' ] = TERM
-env[ 'LANG' ] = LANG
-env[ 'LC_ALL' ] = LANG
+env[ 'LANG' ] = 'en_US.UTF-8'
 
 # Initializing
 actions = []                # Available menu actions
@@ -72,7 +70,7 @@ def reset_terminal( sleep: float = 0.1 ) -> None:
 # This is used to display the menu on the framebuffer
 def load_ov_buffer() -> None:
     global ov_buffer
-    img = Image.open( MENU_IMAGE ).resize(
+    img = Image.open( IMAGE ).resize(
         ( DISPLAY_RES_X, DISPLAY_RES_Y )
     ).convert( 'RGB' )
     for r, g, b in img.getdata():
