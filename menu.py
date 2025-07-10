@@ -70,8 +70,8 @@ def resolve_command( cmd: str ) -> str:
 # Terminate current running process if there is one
 def terminate_proc() -> None:
     global proc
-    pid = os.getpgid( proc.pid ) # type: ignore
     if proc:
+        pid = os.getpgid( proc.pid ) # type: ignore
         try:
             os.killpg( pid, signal.SIGTERM ) # type: ignore
             proc.wait( timeout = 1 )
