@@ -28,6 +28,7 @@ IMG_PATH = os.path.join( SRC_PATH, 'assets' )
 # Constants
 TERM = os.getenv( 'TERM' ) or 'linux'
 IMAGE = os.path.join( IMG_PATH, 'menu.png' )
+TTY = os.ttyname(0) # type: ignore
 
 # Display
 TOUCH_DEVICE = '/dev/input/event3'
@@ -46,7 +47,6 @@ env[ 'LANG' ] = 'en_US.UTF-8'
 actions = []                # Available menu actions
 proc = None                 # Stores the current (sub) process
 last_cmd = None             # Last command that was running
-tty = ''                    # Active TTY
 bl_buffer = bytearray( [ 0, 0, 0, 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y )
 ov_buffer = bytearray()     # Overlay buffer data
 
@@ -60,21 +60,19 @@ def err( msg: str, e: None | Exception = None, code: int = 1 ) -> None:
 
 # Determine the active TTY device
 # This is used to write output to the correct terminal
-def active_tty() -> None:
-    global tty
+def active_tty() -> ( str | None ):
     try:
         with open( '/sys/class/tty/tty0/active', 'r' ) as f:
             active = f.read().strip()
-            tty = f'/dev/{active}'
+            return f'/dev/{active}'
     except Exception as e:
         err( 'Failed to determine active TTY', e )
 
 # Reset terminal to a clean state
 def reset_terminal( sleep: float = 0.1 ) -> None:
-    global tty
     os.system( 'clear && reset' )
-    os.system( f'clear > {tty}' )
-    os.system( f'tput reset > {tty}' )
+    os.system( f'clear > {TTY}' )
+    os.system( f'tput reset > {TTY}' )
     time.sleep( max( 0.1, sleep ) )
 
 # Compile the menu image to a byte array
@@ -108,8 +106,7 @@ def default_action() -> ( dict | None ):
 
 # Resolve command (replace %DIR% and %TTY%)
 def resolve_command( cmd: str ) -> str:
-    global tty
-    return cmd.replace( '%DIR%', SRC_PATH ).replace( '%TTY%', tty )
+    return cmd.replace( '%DIR%', SRC_PATH ).replace( '%TTY%', active_tty() or '' )
 
 # Terminate current (running) process if there is one
 def terminate_proc() -> None:
@@ -125,9 +122,9 @@ def terminate_proc() -> None:
 
 # Run command as sub process
 def run_command( cmd: str ) -> None:
-    global proc, last_cmd, tty
+    global proc, last_cmd
     try:
-        t = open( tty, 'w' )
+        t = open( TTY, 'w' )
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
@@ -149,21 +146,21 @@ def run_last() -> None:
 
 # Show overlay using menu image
 def show_overlay() -> None:
-    global ov_buffer, tty
+    global ov_buffer
     try:
         with open( FRAMEBUFFER, 'wb' ) as fb:
             fb.write( ov_buffer )
-        os.system( f'tput civis > {tty}' )
+        os.system( f'tput civis > {TTY}' )
     except Exception as e:
         err( 'Failed to show overlay', e )
 
 # Hide / clear the overlay
 def hide_overlay() -> None:
-    global bl_buffer, tty
+    global bl_buffer
     try:
         with open( FRAMEBUFFER, 'wb' ) as fb:
             fb.write( bl_buffer  )
-        os.system( f'tput cnorm > {tty}' )
+        os.system( f'tput cnorm > {TTY}' )
     except Exception as e:
         err( 'Failed to hide overlay', e )
 
@@ -174,7 +171,6 @@ def main() -> None:
     x = y = None
 
     # Initialize environment
-    active_tty()
     load_ov_buffer()
 
     # Load available actions
