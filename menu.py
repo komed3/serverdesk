@@ -97,9 +97,9 @@ def default_action() -> ( dict | None ):
     global actions
     return next( ( a for a in actions if a.get( 'default' ) == True ), None )
 
-# Resolve command (replace %DIR% with source path)
+# Resolve command (replace %DIR% and %TTY%)
 def resolve_command( cmd: str ) -> str:
-    return cmd.replace( '%DIR%', SRC_PATH )
+    return cmd.replace( '%DIR%', SRC_PATH ).replace( '%TTY%', TTY )
 
 # Terminate current (running) process if there is one
 def terminate_proc() -> None:
