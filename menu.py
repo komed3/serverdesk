@@ -115,6 +115,7 @@ def run_command( cmd: str ) -> None:
     global proc, last_cmd
     try:
         t = open( TTY, 'w' )
+        last_cmd = cmd
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
@@ -124,7 +125,6 @@ def run_command( cmd: str ) -> None:
             stderr = t,
             stdin = t
         )
-        last_cmd = cmd
     except Exception as e:
         err( f'Failed to run command <{cmd}>', e )
 
@@ -219,11 +219,9 @@ def main() -> None:
                             hide_overlay()
                             overlay_vis = False
                             reset_terminal( 0.5 )
-                            run_command( action[ 'cmd' ] )
-                            if action.get( 'rerun' ):
-                                terminate_proc()
-                                reset_terminal( 0.5 )
+                            if action.get( 'ext' ):
                                 run_last()
+                            run_command( action[ 'cmd' ] )
 
 # Run the program
 # Safely execute the main function
