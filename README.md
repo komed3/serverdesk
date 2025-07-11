@@ -16,3 +16,27 @@ Designed for environments with direct physical access, ServerDesk provides quick
 - **Modular structure** – clean separation of scripts, assets and logic
 
 ServerDesk is ideal for embedded or dedicated maintenance terminals, homelab servers, or rack-mounted systems with integrated display hardware.
+
+## Requirements
+
+### Hardware
+
+- Linux-capable device with framebuffer support (e.g. `/dev/fb0`)
+- Touchscreen input device (e.g. `/dev/input/eventX`)
+
+### Software
+
+- Any Linux distribution with:  
+  Python 3.10+
+  Systemd
+  Framebuffer device enabled (no X11 or Wayland needed)
+  Write access to `/dev/fb0` and `/dev/input/eventX`
+
+- Python packages: `evdev` and `Pillow`
+
+You can install them via:
+
+```bash
+sudo apt install python3-evdev
+sudo apt install python3-pillow
+```
