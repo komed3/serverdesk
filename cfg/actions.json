@@ -20,7 +20,7 @@
   },
   {
     "name": "activity",
-    "cmd": "last",
+    "cmd": "last -wx | tac",
     "x1":  40, "y1": 140,
     "x2": 340, "y2": 220
   },
