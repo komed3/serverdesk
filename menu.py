@@ -111,7 +111,7 @@ def terminate_proc() -> None:
         proc = None
 
 # Run command as sub process
-def run_command( cmd: str, set_last: bool = True ) -> None:
+def run_command( cmd: str ) -> None:
     global proc, last_cmd
     try:
         t = open( TTY, 'w' )
@@ -124,8 +124,7 @@ def run_command( cmd: str, set_last: bool = True ) -> None:
             stderr = t,
             stdin = t
         )
-        if set_last:
-            last_cmd = cmd
+        last_cmd = cmd
     except Exception as e:
         err( f'Failed to run command <{cmd}>', e )
 
@@ -218,16 +217,15 @@ def main() -> None:
                         show_overlay()
                         overlay_vis = True
                     else:
+                        terminate_proc()
+                        hide_overlay()
+                        reset_terminal( 0.5 )
+                        overlay_vis = False
                         action = find_action( x, y )
                         if action and action.get( 'cmd' ):
-                            terminate_proc()
-                            hide_overlay()
-                            overlay_vis = False
-                            reset_terminal( 0.5 )
-                            run_command(
-                                action[ 'cmd' ],
-                                not ( action.get( 'ext' ) or False )
-                            )
+                            run_command( action[ 'cmd' ] )
+                        else:
+                            run_last()
 
 # Run the program
 # Safely execute the main function
