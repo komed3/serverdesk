@@ -74,7 +74,7 @@
   },
   {
     "name": "login",
-    "cmd": "chvt 3 && exec login",
+    "cmd": "%DIR%/bin/login.sh",
     "rerun": true,
     "x1": 640, "y1": 460,
     "x2": 740, "y2": 560
