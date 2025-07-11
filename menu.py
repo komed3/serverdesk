@@ -211,10 +211,9 @@ def main() -> None:
                     else:
                         action = find_action( x, y )
                         if action and action.get( 'cmd' ):
-                            if not ( action.get( 'external' ) or False ):
-                                hide_overlay()
-                                overlay_vis = False
                             terminate_proc()
+                            hide_overlay()
+                            overlay_vis = False
                             reset_terminal( 0.5 )
                             run_command( action[ 'cmd' ] )
 
