@@ -58,16 +58,6 @@ def err( msg: str, e: None | Exception = None, code: int = 1 ) -> None:
         print( f'[ERR] {msg}' )
     quit( code )
 
-# Determine the active TTY device
-# This is used to write output to the correct terminal
-def active_tty() -> ( str | None ):
-    try:
-        with open( '/sys/class/tty/tty0/active', 'r' ) as f:
-            active = f.read().strip()
-            return f'/dev/{active}'
-    except Exception as e:
-        err( 'Failed to determine active TTY', e )
-
 # Reset terminal to a clean state
 def reset_terminal( sleep: float = 0.1 ) -> None:
     os.system( 'clear && reset' )
@@ -106,7 +96,7 @@ def default_action() -> ( dict | None ):
 
 # Resolve command (replace %DIR% and %TTY%)
 def resolve_command( cmd: str ) -> str:
-    return cmd.replace( '%DIR%', SRC_PATH ).replace( '%TTY%', active_tty() or '' )
+    return cmd.replace( '%DIR%', SRC_PATH ).replace( '%TTY%', TTY )
 
 # Terminate current (running) process if there is one
 def terminate_proc() -> None:

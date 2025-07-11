@@ -28,8 +28,8 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="1.0444209"
-     inkscape:cx="504.58584"
-     inkscape:cy="309.26229"
+     inkscape:cx="500.75597"
+     inkscape:cy="298.73014"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1912"
@@ -64,7 +64,7 @@
            x="118.50623"
            y="94.395309"
            style="stroke-width:0.69225;fill:#0a141e;fill-opacity:1">MONITOR</tspan></text></g><g
-       id="shell"><path
+       id="activity"><path
          style="fill:#ffffff"
          d="m 60,140 a 20,20 0 0 0 -20,20 v 40 a 20,20 0 0 0 20,20 h 260 a 20,20 0 0 0 20,-20 v -40 a 20,20 0 0 0 -20,-20 z"
          id="path692" /><path
@@ -80,7 +80,7 @@
            id="tspan43145-4"
            x="122.27645"
            y="191.02933"
-           style="fill:#0a141e;fill-opacity:1;stroke-width:0.706639">TERMINAL</tspan></text></g><g
+           style="fill:#0a141e;fill-opacity:1;stroke-width:0.706639">ACTIVITY</tspan></text></g><g
        id="in_out"><path
          style="fill:#ffffff"
          d="m 60,240 a 20,20 0 0 0 -20,20 v 40 a 20,20 0 0 0 20,20 h 260 a 20,20 0 0 0 20,-20 v -40 a 20,20 0 0 0 -20,-20 z"
@@ -129,7 +129,7 @@
            x="438.50623"
            y="94.395309"
            style="fill:#0a141e;fill-opacity:1;stroke-width:0.69225">SYSMSG</tspan></text></g><g
-       id="root"><path
+       id="sensors"><path
          style="fill:#ffffff"
          d="m 380,140 a 20,20 0 0 0 -20,20 v 40 a 20,20 0 0 0 20,20 h 260 a 20,20 0 0 0 20,-20 v -40 a 20,20 0 0 0 -20,-20 z"
          id="path967" /><path
@@ -145,7 +145,7 @@
            id="tspan43145-4-2"
            x="448.92783"
            y="191.02931"
-           style="fill:#0a141e;fill-opacity:1;stroke-width:0.706639">ROOT</tspan></text></g><g
+           style="fill:#0a141e;fill-opacity:1;stroke-width:0.706639">SENSORS</tspan></text></g><g
        id="free"><path
          style="fill:#ffffff"
          d="m 380,240 a 20,20 0 0 0 -20,20 v 40 a 20,20 0 0 0 20,20 h 260 a 20,20 0 0 0 20,-20 v -40 a 20,20 0 0 0 -20,-20 z"
