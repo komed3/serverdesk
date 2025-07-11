@@ -190,9 +190,13 @@ def main() -> None:
     # Main loop
     for e in device.read_loop():
 
+        # If the event happens while on another tty, skip it
+        if TTY != os.ttyname(0): # type: ignore
+            continue
+
         # If the event is a key event, calculate the touch
         # coordinates based on the event type and code
-        if e.type == evdev.ecodes.EV_ABS:
+        elif e.type == evdev.ecodes.EV_ABS:
             if e.code == evdev.ecodes.ABS_X:
                 x = e.value * DISPLAY_RES_X / TOUCH_RES_X
             elif e.code == evdev.ecodes.ABS_Y:
@@ -224,8 +228,6 @@ def main() -> None:
                                 action[ 'cmd' ],
                                 not ( action[ 'ext' ] or False )
                             )
-                            if action.get( 'ext' ) and action[ 'ext' ]:
-                                run_last()
 
 # Run the program
 # Safely execute the main function
