@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Interrupt ServerDesk
-sudo systemctl stop serverdesk.service
-
 # Switch to TTY3
 sudo chvt 3
+
+# Interrupt ServerDesk
+sudo systemctl stop serverdesk.service
 
 # Wait until a user logs out
 #while who | grep -q 'tty3'; do
