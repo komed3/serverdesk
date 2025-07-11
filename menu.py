@@ -46,7 +46,6 @@ env[ 'LANG' ] = 'en_US.UTF-8'
 # Initializing
 actions = []                # Available menu actions
 proc = None                 # Stores the current (sub) process
-last_cmd = None             # Last command that was running
 bl_buffer = bytearray( [ 0, 0, 0, 0 ] * DISPLAY_RES_X * DISPLAY_RES_Y )
 ov_buffer = bytearray()     # Overlay buffer data
 
@@ -112,7 +111,7 @@ def terminate_proc() -> None:
 
 # Run command as sub process
 def run_command( cmd: str ) -> None:
-    global proc, last_cmd
+    global proc
     try:
         t = open( TTY, 'w' )
         proc = subprocess.Popen(
@@ -124,15 +123,8 @@ def run_command( cmd: str ) -> None:
             stderr = t,
             stdin = t
         )
-        last_cmd = cmd
     except Exception as e:
         err( f'Failed to run command <{cmd}>', e )
-
-# Run the previous command if it exists
-def run_last() -> None:
-    global last_cmd
-    if last_cmd:
-        run_command( last_cmd )
 
 # Show overlay using menu image
 def show_overlay() -> None:
@@ -217,18 +209,14 @@ def main() -> None:
                         show_overlay()
                         overlay_vis = True
                     else:
-                        terminate_proc()
-                        hide_overlay()
-                        reset_terminal( 0.5 )
-                        overlay_vis = False
                         action = find_action( x, y )
                         if action and action.get( 'cmd' ):
-                            if action.get( 'external' ) and action[ 'external' ]:
-                                show_overlay()
-                                overlay_vis = True
+                            if not ( action.get( 'external' ) or False ):
+                                hide_overlay()
+                                overlay_vis = False
+                            terminate_proc()
+                            reset_terminal( 0.5 )
                             run_command( action[ 'cmd' ] )
-                        else:
-                            run_last()
 
 # Run the program
 # Safely execute the main function
