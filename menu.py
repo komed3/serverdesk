@@ -111,11 +111,10 @@ def terminate_proc() -> None:
         proc = None
 
 # Run command as sub process
-def run_command( cmd: str ) -> None:
+def run_command( cmd: str, set_last: bool = True ) -> None:
     global proc, last_cmd
     try:
         t = open( TTY, 'w' )
-        last_cmd = cmd
         proc = subprocess.Popen(
             resolve_command( cmd ),
             shell = True,
@@ -125,6 +124,8 @@ def run_command( cmd: str ) -> None:
             stderr = t,
             stdin = t
         )
+        if set_last:
+            last_cmd = cmd
     except Exception as e:
         err( f'Failed to run command <{cmd}>', e )
 
@@ -157,8 +158,9 @@ def hide_overlay() -> None:
 # The main program
 def main() -> None:
     global actions
-    overlay_vis = touch_active = False
     x = y = None
+    overlay_vis = touch_active = False
+    set_last = True
 
     # Initialize environment
     load_ov_buffer()
@@ -218,10 +220,12 @@ def main() -> None:
                             terminate_proc()
                             hide_overlay()
                             overlay_vis = False
+                            set_last = True
                             reset_terminal( 0.5 )
-                            if action.get( 'ext' ):
+                            if action.get( 'ext' ) and action[ 'ext' ]:
+                                set_last = False
                                 run_last()
-                            run_command( action[ 'cmd' ] )
+                            run_command( action[ 'cmd' ], set_last )
 
 # Run the program
 # Safely execute the main function
