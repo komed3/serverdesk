@@ -74,7 +74,7 @@
   },
   {
     "name": "login",
-    "cmd": "%DIR%/bin/login.sh",
+    "cmd": "%DIR%/bin/login_session.sh",
     "rerun": true,
     "x1": 640, "y1": 460,
     "x2": 740, "y2": 560
