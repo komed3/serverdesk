@@ -223,6 +223,9 @@ def main() -> None:
                         overlay_vis = False
                         action = find_action( x, y )
                         if action and action.get( 'cmd' ):
+                            if action.get( 'external' ) and action[ 'external' ]:
+                                show_overlay()
+                                overlay_vis = True
                             run_command( action[ 'cmd' ] )
                         else:
                             run_last()
