@@ -1,18 +1,21 @@
 #!/bin/bash
 
-# Switch to login TTY
-sudo chvt 3
+TTYNUM=3
+TTYDEV="/dev/tty$TTYNUM"
+TTYONE="/dev/tty1"
 
-# Wait briefly for a clean switchover
+# Switch to login TTY
+sudo chvt "$TTYNUM"
 sleep 0.2
 
-# Start login (blocking)
-sudo exec </dev/tty3 > /dev/tty3 2>&1
-sudo setsid login
-RET=$?
+# Keep loop open as long as login has not been successfully completed
+sudo setsid bash -c "
+  exec < $TTYDEV > $TTYDEV 2>&1
+  while true; do
+    login
+    sleep 1
+  done
+"
 
 # After logout: switch back to the ServerDesk console
-sudo chvt 1
-
-# Show errors
-exit $RET
+sudo chvt "${SERVERDESK_TTY#/dev/tty}"
