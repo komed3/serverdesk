@@ -226,7 +226,7 @@ def main() -> None:
                             reset_terminal( 0.5 )
                             run_command(
                                 action[ 'cmd' ],
-                                not ( action[ 'ext' ] or False )
+                                not ( action.get( 'ext' ) or False )
                             )
 
 # Run the program
