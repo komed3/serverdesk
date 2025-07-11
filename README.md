@@ -2,7 +2,7 @@
 
 **ServerDesk** is a lightweight, framebuffer-based touchscreen menu for Linux servers – purpose-built for direct control and monitoring without the need for a graphical desktop environment.
 
-Designed for environments with direct physical access, ServerDesk provides quick access to essential system commands such as process monitoring, log inspection, shutdown/reboot actions, and more – all through a clean, responsive overlay interface operated via touch input.
+Designed for environments with direct physical access, **ServerDesk** provides quick access to essential system commands such as process monitoring, log inspection, shutdown/reboot actions, and more – all through a clean, responsive overlay interface operated via touch input.
 
 ![Overlay](./assets/menu.png)
 
@@ -15,7 +15,7 @@ Designed for environments with direct physical access, ServerDesk provides quick
 - **Failsafe execution** – subprocesses run in isolated sessions, auto-recovery supported
 - **Modular structure** – clean separation of scripts, assets and logic
 
-ServerDesk is ideal for embedded or dedicated maintenance terminals, homelab servers, or rack-mounted systems with integrated display hardware.
+**ServerDesk** is ideal for embedded or dedicated maintenance terminals, homelab servers, or rack-mounted systems with integrated display hardware.
 
 ## Requirements
 
@@ -39,4 +39,48 @@ You can install them via:
 ```bash
 sudo apt install python3-evdev
 sudo apt install python3-pillow
+```
+
+## Set-Up
+
+### Create User
+
+It is recommended to run **ServerDesk** under a dedicated system user. This enhances separation and allows fine-tuned sudo permissions. Name this user whatever you want, but bear in mind to change all the commands listed below to match your choice.
+
+Here, the username `watchdog` will be used:
+
+```bash
+# Create the user account
+sudo useradd -r -m -d /home/watchdog -s /usr/sbin/nologin watchdog
+
+# Grant the user necessary rights (framebuffer and tty)
+sudo usermod -aG video,tty watchdog
+
+# You may check those with
+groups watchdog
+```
+
+To allow **ServerDesk** to run commands without password prompts, edit the sudoers file:
+
+```bash
+sudo nano /etc/sudoers.d/serverdesk
+```
+
+And add the list of commands needet to run **ServerDesk**:
+
+```bash
+watchdog ALL=(ALL) NOPASSWD: \
+  /usr/bin/apt, \
+  /usr/bin/apt-get, \
+  /usr/bin/chvt, \
+  /usr/bin/df, \
+  /usr/bin/dmesg, \
+  /usr/bin/dpkg, \
+  /usr/bin/htop, \
+  /usr/bin/journalctl, \
+  /usr/bin/systemctl, \
+  /usr/bin/w, \
+  /usr/sbin/iftop, \
+  /usr/sbin/iotop, \
+  /usr/sbin/mdadm
 ```
