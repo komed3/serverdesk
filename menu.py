@@ -158,9 +158,8 @@ def hide_overlay() -> None:
 # The main program
 def main() -> None:
     global actions
-    x = y = None
     overlay_vis = touch_active = False
-    set_last = True
+    x = y = None
 
     # Initialize environment
     load_ov_buffer()
@@ -220,12 +219,13 @@ def main() -> None:
                             terminate_proc()
                             hide_overlay()
                             overlay_vis = False
-                            set_last = True
                             reset_terminal( 0.5 )
+                            run_command(
+                                action[ 'cmd' ],
+                                not ( action[ 'ext' ] or False )
+                            )
                             if action.get( 'ext' ) and action[ 'ext' ]:
-                                set_last = False
                                 run_last()
-                            run_command( action[ 'cmd' ], set_last )
 
 # Run the program
 # Safely execute the main function
