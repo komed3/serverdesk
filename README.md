@@ -94,7 +94,28 @@ Clone the **ServerDesk** repository to the appropriate location:
 
 ```bash
 git clone https://github.com/komed3/serverdesk /home/watchdog/serverdesk
+```
+
+You can clone this repository with any user, but ownership must be transferred to your designated service user afterward, so the service can run the program without disruptions.
+
+```bash
 sudo chown -R watchdog:watchdog /home/watchdog/serverdesk
 ```
 
-**Tip:** You can clone this repository with any user, but ownership must be transferred to your designated service user afterward, so the service can run the program without disruptions.
+If the program, parts of it or individual commands cannot be executed, the following may help:
+
+```bash
+# Convert shell scripts to Unix format
+sudo apt install dos2unix
+find /home/watchdog/serverdesk/bin -type f -name "*.sh" -exec dos2unix {} +
+
+# Ensure that all shell scripts are executable
+sudo chmod +x /home/watchdog/serverdesk/bin/*.sh
+sudo chmod +x /home/watchdog/serverdesk/menu.py
+```
+
+**ServerDesk** will automatically update itself via the service. If you do not want this behavior, add an exception for the directory so that any other user can upgrade it via `git pull`.
+
+```bash
+git config --global --add safe.directory /home/watchdog/serverdesk
+```
