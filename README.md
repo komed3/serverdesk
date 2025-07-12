@@ -44,6 +44,8 @@ sudo apt install \
   python3 python3-evdev python3-pillow
 ```
 
+----
+
 ## Installation
 
 ### Step 1 — Create User
@@ -175,8 +177,8 @@ The `serverdesk.service` is tailored to run **ServerDesk** directly on virtual t
 - `StandardInput/Output=tty` binds the service explicitly to the virtual console, enabling full interaction via touch and system commands.
 - `TTYPath=/dev/tty1` defines the target terminal device for this service; this line ensures all in- and output is tied to the correct display.
 - `Restart=always` and `RestartSec=2` provide resilience: if **ServerDesk** crashes or exits unexpectedly, it will be restarted automatically after a short delay.
-- `Conflicts=getty@tty1.service` disables the standard login prompt on `tty1`, avoiding interference with **ServerDesk**'s console usage.
-- `ConditionPathExists=...menu.py` ensures the service won't start unless the main script is present — useful as a safety check during setup or updates.
+- `Conflicts=getty@tty1.service` disables the standard login prompt on `tty1`, avoiding interference with **ServerDesk**’s console usage.
+- `ConditionPathExists=...menu.py` ensures the service won’t start unless the main script is present — useful as a safety check during setup or updates.
 
 You may need to adjust some of them, especially if a different user name has been chosen or the files are located in a separate directory.
 
@@ -213,3 +215,93 @@ After rebooting the machine, the **ServerDesk** service should start and run its
 > Ensure SSH access is available before proceeding — especially on headless systems.
 >
 > Alternatively, you can use `Ctrl + Alt + F2` (or F3–F6) to switch to another virtual terminal and log in there.
+
+----
+
+## Configuration
+
+All settings and commands correspond to [komed3](https://github.com/komed3)’s server setup. They must be adapted to your own system (RAID, network, etc.). All essential files are listed and explained below in order to configure **ServerDesk** for your own server.
+
+### `cfg/actions.json`
+
+The heart of **ServerDesk**’s interaction model lies in the `/cfg/actions.json` file. Each touch-sensitive area on the screen is defined here, linking user input to system commands.
+
+```json
+{
+  "name": "htop",
+  "cmd": "sudo htop",
+  "x1": 40, "y1": 40,
+  "x2": 340, "y2": 120
+}
+```
+
+**Fields:**
+
+- `name`: A short, descriptive label (not shown visually, but helpful for reference).
+- `cmd`: The shell command to execute when this region is tapped. Paths like `%DIR%` or `%TTY%` can be used as placeholders and are automatically replaced at runtime.
+- `x1`, `y1`, `x2`, `y2`: Define a rectangular region (in pixels) on the display. Touches inside this area will trigger the action.
+- `default`: If true, it marks the command to run automatically when **ServerDesk** starts.
+
+### `cfg/iftop`
+
+The `iftop` action is a special case: it requires specifying the correct network interface in a separate configuration file. You can find your active interface by running:
+
+```bash
+ip route | grep default
+```
+
+Replace `enp4s0` with your actual device name, such as `eth0`, `enp3s0` or `wlan0`.
+
+To apply changes to `iftop`, ensure the following in your `actions.json`:
+
+```json
+{
+  "name": "network",
+  "cmd": "sudo iftop -c %DIR%/cfg/iftop",
+  ...
+}
+```
+
+### `assets/menu.png`
+
+The visual layout of **ServerDesk** is defined by the `assets/menu.png` image, which is displayed fullscreen. When updating this image, be sure the touch regions in `actions.json` still align visually with the corresponding buttons or labels.
+
+You can edit or export your layout from any image editing tool (e.g., GIMP or Photoshop) and overwrite the `menu.png` with your own design. It should correspond precisely with the resolution of the touch panel.
+
+----
+
+## Updating ServerDesk via Git
+
+If you wish to customize **ServerDesk** further — for example by adding your own actions, modifying the menu layout, or integrating new monitoring tools — you are encouraged to fork the [official repository](https://github.com/komed3/serverdesk).
+
+By creating a fork, you retain full control over your version and can push changes to GitHub at any time.
+
+When the service is configured with the following line:
+
+```bash
+ExecStartPre=/usr/bin/git -C /home/watchdog/serverdesk pull --quiet
+```
+
+**ServerDesk** will automatically attempt a `git pull` every time the service is (re)started. This means you can apply updates or test new functionality simply by running:
+
+```bash
+sudo systemctl restart serverdesk
+```
+
+No reboot is necessary to apply most changes — editing `actions.json`, updating the menu image, or changing scripts in `bin/` can all be tested immediately after restarting the service.
+
+If you encounter a git error like “dubious ownership”, make sure the repository is marked as a safe directory:
+
+```bash
+git config --global --add safe.directory /home/watchdog/serverdesk
+```
+
+And ensure correct file permissions with:
+
+```bash
+sudo chown -R watchdog:watchdog /home/watchdog/serverdesk
+```
+
+---
+
+**© 2025 komed3 (Paul Köhler) / MIT license**
