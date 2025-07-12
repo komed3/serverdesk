@@ -26,19 +26,22 @@ Designed for environments with direct physical access, **ServerDesk** provides q
 
 ### Software
 
-- Any Linux distribution with:  
-  Python 3.10+
-  Systemd
-  Framebuffer device enabled (no X11 or Wayland needed)
-  Write access to `/dev/fb0` and `/dev/input/eventX`
-
+- Any Linux distribution with:
+  - Python 3.10+
+  - Systemd
+  - Framebuffer device enabled (no X11 or Wayland needed)
+  - Write access to `/dev/fb0` and `/dev/input/eventX`
+- Some packages to run **ServerDesk** commands:
+  - `htop`, `iftop` and `iotop`: monitoring tools
+  - `lm-sensors`: hardware monitoring
 - Python packages: `evdev` and `Pillow`
 
 You can install them via:
 
 ```bash
-sudo apt install python3-evdev
-sudo apt install python3-pillow
+sudo apt install \
+  htop iftop iotop lm-sensors \
+  python3 python3-evdev python3-pillow
 ```
 
 ## Installation
