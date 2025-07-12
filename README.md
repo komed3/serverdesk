@@ -125,3 +125,63 @@ Once the repository has been cloned and all its dependencies installed, the prog
 ```bash
 sudo -u watchdog /home/watchdog/serverdesk/menu.py
 ```
+
+### Step 3 — Set Up systemd Service
+
+To ensure **ServerDesk** starts automatically on boot and controls the primary console (`tty1`), create a custom systemd service file:
+
+```bash
+sudo nano /etc/systemd/system/serverdesk.service
+```
+
+And put those lines there:
+
+```bash
+[Unit]
+Description=ServerDesk
+After=multi-user.target
+Wants=graphical.target
+ConditionPathExists=/home/watchdog/serverdesk/menu.py
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+User=watchdog
+Group=tty
+WorkingDirectory=/home/watchdog/serverdesk
+ExecStartPre=/usr/bin/git -C /home/watchdog/serverdesk pull --quiet
+ExecStart=/usr/bin/python3 /home/watchdog/serverdesk/menu.py
+StandardInput=tty
+StandardOutput=tty
+StandardError=journal
+Restart=always
+RestartSec=2
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
+```
+
+To prevent login prompts from interfering with **ServerDesk**, disable the default getty on `tty1`:
+
+```bash
+sudo systemctl disable getty@tty1.service
+```
+
+Reload systemd and activate the new service:
+
+```bash
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable serverdesk.service
+sudo systemctl start serverdesk.service
+```
+
+Now reboot the system to complete the setup:
+
+```bash
+sudo reboot
+```
