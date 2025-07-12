@@ -119,3 +119,9 @@ sudo chmod +x /home/watchdog/serverdesk/menu.py
 ```bash
 git config --global --add safe.directory /home/watchdog/serverdesk
 ```
+
+Once the repository has been cloned and all its dependencies installed, the program can be tested locally:
+
+```bash
+sudo -u watchdog /home/watchdog/serverdesk/menu.py
+```
