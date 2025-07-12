@@ -185,3 +185,12 @@ Now reboot the system to complete the setup:
 ```bash
 sudo reboot
 ```
+
+> [!WARNING]
+> **Important Note on Access**
+>
+> Once **ServerDesk** is active on `tty1`, the system will no longer provide a login prompt on that terminal.
+>
+> Ensure SSH access is available before proceeding — especially on headless systems.
+>
+> Alternatively, you can use `Ctrl + Alt + F2` (or F3–F6) to switch to another virtual terminal and log in there.
