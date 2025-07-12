@@ -165,6 +165,23 @@ RemainAfterExit=no
 WantedBy=multi-user.target
 ```
 
+The `serverdesk.service` is tailored to run **ServerDesk** directly on virtual terminal `tty1`, ensuring smooth startup and reliable behavior:
+
+- `User=watchdog` runs the process under a restricted service user without login privileges, improving security and preventing unintended interactions.
+- `Group=tty` ensures access to `/dev/tty1`, which is required to read and write to the console framebuffer and control terminal sessions.
+- `WorkingDirectory=/home/watchdog/serverdesk` sets the base path for relative commands and asset resolution.
+- `ExecStartPre=...git pull` optionally updates the local repository before launch, allowing for unattended upgrades if no modifications are made.
+- `ExecStart=...menu.py` is the main Python script that launches the **ServerDesk** menu overlay.
+- `StandardInput/Output=tty` binds the service explicitly to the virtual console, enabling full interaction via touch and system commands.
+- `TTYPath=/dev/tty1` defines the target terminal device for this service; this line ensures all in- and output is tied to the correct display.
+- `Restart=always` and `RestartSec=2` provide resilience: if **ServerDesk** crashes or exits unexpectedly, it will be restarted automatically after a short delay.
+- `Conflicts=getty@tty1.service` disables the standard login prompt on `tty1`, avoiding interference with **ServerDesk**'s console usage.
+- `ConditionPathExists=...menu.py` ensures the service won't start unless the main script is present — useful as a safety check during setup or updates.
+
+You may need to adjust some of them, especially if a different user name has been chosen or the files are located in a separate directory.
+
+----
+
 To prevent login prompts from interfering with **ServerDesk**, disable the default getty on `tty1`:
 
 ```bash
