@@ -257,8 +257,7 @@ To apply changes to `iftop`, ensure the following in your `actions.json`:
 ```json
 {
   "name": "network",
-  "cmd": "sudo iftop -c %DIR%/cfg/iftop",
-  ...
+  "cmd": "sudo iftop -c %DIR%/cfg/iftop"
 }
 ```
 
