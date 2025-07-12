@@ -41,9 +41,9 @@ sudo apt install python3-evdev
 sudo apt install python3-pillow
 ```
 
-## Set-Up
+## Installation
 
-### Create User
+### Step 1 — Create User
 
 It is recommended to run **ServerDesk** under a dedicated system user. This enhances separation and allows fine-tuned sudo permissions. Name this user whatever you want, but bear in mind to change all the commands listed below to match your choice.
 
@@ -84,3 +84,14 @@ watchdog ALL=(ALL) NOPASSWD: \
   /usr/sbin/iotop, \
   /usr/sbin/mdadm
 ```
+
+### Step 2 — Cloning Repository
+
+Clone the **ServerDesk** repository to the appropriate location:
+
+```bash
+git clone https://github.com/komed3/serverdesk /home/watchdog/serverdesk
+sudo chown -R watchdog:watchdog /home/watchdog/serverdesk
+```
+
+**Tip:** You can clone this repository with any user, but ownership must be transferred to your designated service user afterward, so the service can run the program without disruptions.
