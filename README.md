@@ -186,6 +186,8 @@ Now reboot the system to complete the setup:
 sudo reboot
 ```
 
+After rebooting the machine, the **ServerDesk** service should start and run its standard command (`htop`). When interacting with the touch screen, the overlay appears, allowing the user to execute further commands. System buttons on the bottom edge will allow to switch to TTY3 to log in, reboot the system, and shut it down completely.
+
 > [!WARNING]
 > **Important Note on Access**
 >
