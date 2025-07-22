@@ -71,7 +71,7 @@ To allow **ServerDesk** to run commands without password prompts, edit the sudoe
 sudo nano /etc/sudoers.d/serverdesk
 ```
 
-And add the list of commands needet to run **ServerDesk**:
+And add the list of commands needed to run **ServerDesk**:
 
 ```bash
 watchdog ALL=(ALL) NOPASSWD: \
