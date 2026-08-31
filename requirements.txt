@@ -1,2 +1,2 @@
-evdev>=1.9.3
+evdev>=2.0.0
 pillow>=12.3.0
